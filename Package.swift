@@ -5,20 +5,37 @@ import PackageDescription
 
 let package = Package(
     name: "swift-ai-vapor",
+    platforms: [
+        .macOS(.v13)
+    ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
-            name: "swift-ai-vapor",
-            targets: ["swift-ai-vapor"]),
+            name: "SwiftAIVapor",
+            targets: ["SwiftAIVapor"]
+        )
+    ],
+    dependencies: [
+        .package(url: "https://github.com/grepug/swift-ai.git", branch: "main"),
+        .package(url: "https://github.com/grepug/event-source.git", branch: "master"),
+        .package(url: "https://github.com/vapor/vapor.git", from: "4.99.3"),
+        .package(url: "https://github.com/pointfreeco/swift-dependencies.git", from: "1.6.1"),
+        .package(url: "https://github.com/grepug/concurrency-utils.git", branch: "main"),
     ],
     targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "swift-ai-vapor"),
+            name: "SwiftAIVapor",
+            dependencies: [
+                .product(name: "SwiftAI", package: "swift-ai"),
+                .product(name: "Vapor", package: "vapor"),
+                .product(name: "Dependencies", package: "swift-dependencies"),
+                .product(name: "ConcurrencyUtils", package: "concurrency-utils"),
+            ],
+            path: "Sources/SwiftAIVapor"
+        ),
         .testTarget(
             name: "swift-ai-vaporTests",
-            dependencies: ["swift-ai-vapor"]
+            dependencies: ["SwiftAIVapor"]
         ),
     ]
 )
