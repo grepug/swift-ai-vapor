@@ -1,19 +1,17 @@
 import Dependencies
 import SwiftAI
+import SwiftAIServer
 import Vapor
 
-public struct LLMRunnerMiddleware<PromptProvider: LLMPromptProvider>: AsyncMiddleware, Sendable {
-    let models: [any LLMModel]
-    let promptProvider: PromptProvider
-    let setupStorage: @Sendable (Request, LLMRunner<PromptProvider, LLMClient>) -> Void
+public struct AIRunnerMiddleware: AsyncMiddleware, Sendable {
+    let models: [any AIModel]
+    let setupStorage: @Sendable (Request, AICompletionRunner<AIClient>) -> Void
 
     public init(
-        models: [any LLMModel],
-        promptProvider: PromptProvider,
-        setupStorage: @escaping @Sendable (Request, LLMRunner<PromptProvider, LLMClient>) -> Void
+        models: [any AIModel],
+        setupStorage: @escaping @Sendable (Request, AICompletionRunner<AIClient>) -> Void
     ) {
         self.models = models
-        self.promptProvider = promptProvider
         self.setupStorage = setupStorage
     }
 
@@ -21,10 +19,9 @@ public struct LLMRunnerMiddleware<PromptProvider: LLMPromptProvider>: AsyncMiddl
         to request: Request,
         chainingTo responder: AsyncResponder
     ) async throws -> Response {
-        let runner = LLMRunner(
+        let runner = AICompletionRunner(
             models: models,
-            promptProvider: promptProvider,
-            client: LLMClient.self
+            client: AIClient.self
         )
 
         setupStorage(request, runner)

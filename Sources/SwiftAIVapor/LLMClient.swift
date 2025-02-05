@@ -1,18 +1,20 @@
 import ConcurrencyUtils
 import Dependencies
 import SwiftAI
+import SwiftAIServer
 import Vapor
 
-public struct LLMClient: LLMHTTPClient {
+public struct AIClient: AIHTTPClient {
     public let prompt: String
-    public let model: any SwiftAI.LLMModel
+    public let model: any AIModel
+
     public let stream: Bool
 
     var client: Client!
 
     @Dependency(\.request) var req
 
-    public init(prompt: String, model: any LLMModel, stream: Bool) {
+    public init(prompt: String, model: any AIModel, stream: Bool) {
         self.prompt = prompt
         self.model = model
         self.stream = stream

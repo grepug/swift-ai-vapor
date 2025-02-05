@@ -27,6 +27,7 @@ let package = Package(
             name: "SwiftAIVapor",
             dependencies: [
                 .product(name: "SwiftAI", package: "swift-ai"),
+                .product(name: "SwiftAIServer", package: "swift-ai"),
                 .product(name: "Vapor", package: "vapor"),
                 .product(name: "Dependencies", package: "swift-dependencies"),
                 .product(name: "ConcurrencyUtils", package: "concurrency-utils"),
