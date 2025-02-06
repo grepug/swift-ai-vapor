@@ -6,13 +6,16 @@ import Vapor
 public struct AIRunnerMiddleware: AsyncMiddleware, Sendable {
     let models: [any AIModel]
     let setupStorage: @Sendable (Request, AICompletionRunner<AIClient>) -> Void
+    let log: (@Sendable (String) -> Void)?
 
     public init(
         models: [any AIModel],
-        setupStorage: @escaping @Sendable (Request, AICompletionRunner<AIClient>) -> Void
+        setupStorage: @escaping @Sendable (Request, AICompletionRunner<AIClient>) -> Void,
+        log: (@Sendable (String) -> Void)? = nil
     ) {
         self.models = models
         self.setupStorage = setupStorage
+        self.log = log
     }
 
     public func respond(
@@ -21,7 +24,8 @@ public struct AIRunnerMiddleware: AsyncMiddleware, Sendable {
     ) async throws -> Response {
         let runner = AICompletionRunner(
             models: models,
-            client: AIClient.self
+            client: AIClient.self,
+            log: log
         )
 
         setupStorage(request, runner)

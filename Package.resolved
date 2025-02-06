@@ -74,6 +74,15 @@
       }
     },
     {
+      "identity" : "swift-ai",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/grepug/swift-ai.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "f359a25739c6c6247cfa642b93536c64b0ad4cc0"
+      }
+    },
+    {
       "identity" : "swift-algorithms",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-algorithms.git",
@@ -141,8 +150,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-crypto.git",
       "state" : {
-        "revision" : "ff0f781cf7c6a22d52957e50b104f5768b50c779",
-        "version" : "3.10.0"
+        "revision" : "f2f3774fd116a305136b6866e5e7cb7dff39d8f2",
+        "version" : "3.10.1"
       }
     },
     {
