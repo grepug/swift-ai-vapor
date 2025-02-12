@@ -17,7 +17,6 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/grepug/swift-ai.git", branch: "main"),
-        .package(url: "https://github.com/grepug/event-source.git", branch: "master"),
         .package(url: "https://github.com/vapor/vapor.git", from: "4.99.3"),
         .package(url: "https://github.com/pointfreeco/swift-dependencies.git", from: "1.6.1"),
         .package(url: "https://github.com/grepug/concurrency-utils.git", branch: "main"),

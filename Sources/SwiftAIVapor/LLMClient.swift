@@ -52,6 +52,8 @@ public struct AIClient: AIHTTPClient {
                 } catch {
                     continuation.finish(throwing: error)
                 }
+
+                try await client.shutdown()
             }
         } else {
             do {
@@ -64,13 +66,11 @@ public struct AIClient: AIHTTPClient {
             } catch {
                 continuation.finish(throwing: error)
             }
+
+            try await client.shutdown()
         }
 
         return newStream
-    }
-
-    public func shutdown() async throws {
-        try await client.shutdown()
     }
 }
 
