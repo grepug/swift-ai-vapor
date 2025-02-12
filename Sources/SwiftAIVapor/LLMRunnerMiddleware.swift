@@ -3,14 +3,16 @@ import SwiftAI
 import SwiftAIServer
 import Vapor
 
-public struct AIRunnerMiddleware: AsyncMiddleware, Sendable {
+public struct AIRunnerMiddleware<PromptTemplateProvider: AIPromptTemplateProvider>: AsyncMiddleware, Sendable {
+    public typealias CompletionClient = AICompletionClient<AIClient, PromptTemplateProvider>
+
     let models: [any AIModel]
-    let setupStorage: @Sendable (Request, AICompletionClient<AIClient>) -> Void
+    let setupStorage: @Sendable (Request, CompletionClient) -> Void
     let log: (@Sendable (String, Request) -> Void)?
 
     public init(
         models: [any AIModel],
-        setupStorage: @escaping @Sendable (Request, AICompletionClient<AIClient>) -> Void,
+        setupStorage: @escaping @Sendable (Request, CompletionClient) -> Void,
         log: (@Sendable (_ message: String, _ req: Request) -> Void)? = nil
     ) {
         self.models = models
@@ -25,6 +27,7 @@ public struct AIRunnerMiddleware: AsyncMiddleware, Sendable {
         let runner = AICompletionClient(
             models: models,
             client: AIClient.self,
+            promptTemplateProvider: PromptTemplateProvider(),
             log: { message in
                 log?(message, request)
             }
