@@ -10,15 +10,12 @@ public struct AIClient: AIHTTPClient {
 
     public let stream: Bool
 
-    var client: Client!
-
     @Dependency(\.request) var req
 
     public init(prompt: String, model: any AIModel, stream: Bool) {
         self.prompt = prompt
         self.model = model
         self.stream = stream
-        self.client = req.makeClient()
     }
 
     public func request() async throws -> AsyncThrowingStream<String, any Error> {
@@ -35,9 +32,10 @@ public struct AIClient: AIHTTPClient {
         let (newStream, continuation) = AsyncThrowingStream<String, any Error>.makeStream()
 
         if stream {
-            let stream = client.stream(for: request)
-
             Task {
+                let client = req.makeClient()
+                let stream = client.stream(for: request)
+
                 do {
                     for try await item in stream {
                         let item = item.replacingOccurrences(of: "data:", with: "")
@@ -56,6 +54,8 @@ public struct AIClient: AIHTTPClient {
                 try await client.shutdown()
             }
         } else {
+            let client = req.makeClient()
+
             do {
                 let response = try await client.data(for: request)
                 let strings = decodeResponse(data: response)

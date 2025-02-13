@@ -34,7 +34,7 @@
       "location" : "https://github.com/grepug/concurrency-utils.git",
       "state" : {
         "branch" : "main",
-        "revision" : "3f7dffd8cc4a75ba9d1d1c4f1344f56d7583a4c5"
+        "revision" : "e35db04e36d02414c18b48f3af3f49c8269678cc"
       }
     },
     {
@@ -79,7 +79,7 @@
       "location" : "https://github.com/grepug/swift-ai.git",
       "state" : {
         "branch" : "main",
-        "revision" : "77e15998cd5488c30d4d0aba18c549b9e499eb04"
+        "revision" : "1267f1a001ed5b70a368159a88a94a15d6d1adc6"
       }
     },
     {
@@ -285,8 +285,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/vapor.git",
       "state" : {
-        "revision" : "4f2dcf7d3b47d0af25137ee586405bdffb584045",
-        "version" : "4.113.1"
+        "revision" : "a425e32f9b9d19c0ecab952cb4484c1c15e2536f",
+        "version" : "4.113.2"
       }
     },
     {
