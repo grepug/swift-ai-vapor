@@ -18,7 +18,7 @@ public struct AIClient: AIHTTPClient {
         self.stream = stream
     }
 
-    public func request() async throws -> AsyncThrowingStream<String, any Error> {
+    public func request() async throws(AIHTTPClientError) -> AsyncThrowingStream<String, any Error> {
         let request = ClientRequest(
             urlString: requestInfo.endpoint.absoluteString,
             method: .post,
@@ -51,7 +51,7 @@ public struct AIClient: AIHTTPClient {
                     continuation.finish(throwing: error)
                 }
 
-                try await client.shutdown()
+                try? await client.shutdown()
             }
         } else {
             let client = req.makeClient()
@@ -67,7 +67,7 @@ public struct AIClient: AIHTTPClient {
                 continuation.finish(throwing: error)
             }
 
-            try await client.shutdown()
+            try? await client.shutdown()
         }
 
         return newStream

@@ -8,16 +8,13 @@ public struct AIRunnerMiddleware<PromptTemplateProvider: AIPromptTemplateProvide
 
     let models: [any AIModel]
     let setupStorage: @Sendable (Request, CompletionClient) -> Void
-    let log: (@Sendable (String, Request) -> Void)?
 
     public init(
         models: [any AIModel],
-        setupStorage: @escaping @Sendable (Request, CompletionClient) -> Void,
-        log: (@Sendable (_ message: String, _ req: Request) -> Void)? = nil
+        setupStorage: @escaping @Sendable (Request, CompletionClient) -> Void
     ) {
         self.models = models
         self.setupStorage = setupStorage
-        self.log = log
     }
 
     public func respond(
@@ -28,9 +25,7 @@ public struct AIRunnerMiddleware<PromptTemplateProvider: AIPromptTemplateProvide
             models: models,
             client: AIClient.self,
             promptTemplateProvider: PromptTemplateProvider(),
-            log: { message in
-                log?(message, request)
-            }
+            logger: request.logger
         )
 
         setupStorage(request, runner)
