@@ -7,14 +7,17 @@ public struct AIRunnerMiddleware<PromptTemplateProvider: AIPromptTemplateProvide
     public typealias CompletionClient = AICompletionClient<AIClient, PromptTemplateProvider>
 
     let models: [any AIModel]
+    let promptTemplateProvider: PromptTemplateProvider
     let setupStorage: @Sendable (Request, CompletionClient) -> Void
 
     public init(
         models: [any AIModel],
+        promptTemplateProvider: PromptTemplateProvider,
         setupStorage: @escaping @Sendable (Request, CompletionClient) -> Void
     ) {
         self.models = models
         self.setupStorage = setupStorage
+        self.promptTemplateProvider = promptTemplateProvider
     }
 
     public func respond(
@@ -24,7 +27,7 @@ public struct AIRunnerMiddleware<PromptTemplateProvider: AIPromptTemplateProvide
         let runner = AICompletionClient(
             models: models,
             client: AIClient.self,
-            promptTemplateProvider: PromptTemplateProvider(),
+            promptTemplateProvider: promptTemplateProvider,
             logger: request.logger
         )
 
