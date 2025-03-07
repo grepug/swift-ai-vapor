@@ -15,15 +15,17 @@ typealias CURequest = ConcurrencyUtils.ClientRequest
 struct Client: ClientKind, Sendable {
     let client: AsyncHTTPClient.HTTPClient
     let logger: Logger
+    let timeout: TimeInterval
 
-    init(client: AsyncHTTPClient.HTTPClient, logger: Logger) {
+    init(client: AsyncHTTPClient.HTTPClient, logger: Logger, timeout: TimeInterval) {
         self.client = client
         self.logger = logger
+        self.timeout = timeout
     }
 
     func data(for request: ConcurrencyUtils.ClientRequest) async throws -> Data {
         let request = request.httpClientRequest
-        let response = try await client.execute(request, timeout: .seconds(60), logger: logger)
+        let response = try await client.execute(request, timeout: .seconds(300), logger: logger)
         var bytes = try await response.body.collect(upTo: 1024 * 1024)
 
         return bytes.readData(length: bytes.readableBytes)!
@@ -35,10 +37,10 @@ struct Client: ClientKind, Sendable {
         return AsyncThrowingStream { continuation in
             Task {
                 do {
-                    let response = try await client.execute(request, timeout: .seconds(60), logger: logger)
+                    let response = try await client.execute(request, timeout: .seconds(300), logger: logger)
                     let body = response.body
 
-                    try await withTimeoutThrowingHandler(timeout: .seconds(60)) {
+                    try await withTimeoutThrowingHandler(timeout: .seconds(300)) {
                         for try await buffer in body {
                             let string = String(buffer: buffer)
 
@@ -105,7 +107,11 @@ extension ConcurrencyUtils.ClientRequest {
 }
 
 extension Request {
-    func makeClient() -> Client {
-        return .init(client: .init(eventLoopGroupProvider: .shared(application.eventLoopGroup.any())), logger: logger)
+    func makeClient(timeout: TimeInterval) -> Client {
+        return .init(
+            client: .init(eventLoopGroupProvider: .shared(application.eventLoopGroup.any())),
+            logger: logger,
+            timeout: timeout
+        )
     }
 }

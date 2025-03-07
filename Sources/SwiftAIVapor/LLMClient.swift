@@ -7,15 +7,16 @@ import Vapor
 public struct AIClient: AIHTTPClient {
     public let prompt: String
     public let model: any AIModel
-
     public let stream: Bool
+    public var timeout: TimeInterval
 
     @Dependency(\.request) var req
 
-    public init(prompt: String, model: any AIModel, stream: Bool) {
+    public init(prompt: String, model: any AIModel, stream: Bool, timeout: TimeInterval) {
         self.prompt = prompt
         self.model = model
         self.stream = stream
+        self.timeout = timeout
     }
 
     public func request() async throws(AIHTTPClientError) -> AsyncThrowingStream<String, any Error> {
@@ -33,7 +34,7 @@ public struct AIClient: AIHTTPClient {
 
         if stream {
             Task {
-                let client = req.makeClient()
+                let client = req.makeClient(timeout: timeout)
                 let stream = client.stream(for: request)
 
                 do {
@@ -54,7 +55,7 @@ public struct AIClient: AIHTTPClient {
                 try? await client.shutdown()
             }
         } else {
-            let client = req.makeClient()
+            let client = req.makeClient(timeout: timeout)
 
             do {
                 let response = try await client.data(for: request)
