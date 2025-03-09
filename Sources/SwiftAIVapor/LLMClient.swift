@@ -40,7 +40,7 @@ public struct AIClient: AIHTTPClient {
                 do {
                     for try await item in stream {
                         let item = item.replacingOccurrences(of: "data:", with: "")
-                        let strings = decodeResponse(string: item)
+                        let strings = try decodeResponse(string: item)
 
                         for string in strings {
                             continuation.yield(string)
@@ -59,7 +59,7 @@ public struct AIClient: AIHTTPClient {
 
             do {
                 let response = try await client.data(for: request)
-                let strings = decodeResponse(data: response)
+                let strings = try decodeResponse(data: response)
                 if let string = strings.first {
                     continuation.yield(string)
                 }
