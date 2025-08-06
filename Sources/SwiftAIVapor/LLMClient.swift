@@ -19,7 +19,7 @@ public struct AIClient: AIHTTPClient {
         self.timeout = timeout
     }
 
-    public func request() async throws(AIHTTPClientError) -> AsyncThrowingStream<String, any Error> {
+    public func request() async throws(AIHTTPClientError) -> AsyncThrowingStream<AIHTTPResponseChunk, any Error> {
         let request = ClientRequest(
             urlString: requestInfo.endpoint.absoluteString,
             method: .post,
@@ -30,7 +30,7 @@ public struct AIClient: AIHTTPClient {
             body: requestInfo.body
         )
 
-        let (newStream, continuation) = AsyncThrowingStream<String, any Error>.makeStream()
+        let (newStream, continuation) = AsyncThrowingStream<AIHTTPResponseChunk, any Error>.makeStream()
 
         if stream {
             Task {
@@ -40,10 +40,10 @@ public struct AIClient: AIHTTPClient {
                 do {
                     for try await item in stream {
                         let item = item.replacingOccurrences(of: "data:", with: "")
-                        let strings = try decodeResponse(string: item)
+                        let chunks = try decodeResponse(string: item)
 
-                        for string in strings {
-                            continuation.yield(string)
+                        for chunk in chunks {
+                            continuation.yield(chunk)
                         }
                     }
 
@@ -59,9 +59,9 @@ public struct AIClient: AIHTTPClient {
 
             do {
                 let response = try await client.data(for: request)
-                let strings = try decodeResponse(data: response)
-                if let string = strings.first {
-                    continuation.yield(string)
+                let chunks = try decodeResponse(data: response)
+                if let chunk = chunks.first {
+                    continuation.yield(chunk)
                 }
                 continuation.finish()
             } catch {

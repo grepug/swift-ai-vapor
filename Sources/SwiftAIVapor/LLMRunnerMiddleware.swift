@@ -3,40 +3,44 @@ import SwiftAI
 import SwiftAIServer
 import Vapor
 
-public struct AIRunnerMiddleware: AsyncMiddleware, Sendable {
-    public typealias CompletionClient = AICompletionClient<AIClient>
+public struct AICompletionMiddleware<E: AICompletionClientEventHandler>: AsyncMiddleware, Sendable {
+    public typealias CompletionClient = AICompletionClient<AIClient, E>
 
-    let models: [any AIModel]
-    let promptTemplateProviders: @Sendable (Request) -> [any AIPromptTemplateProvider]
+    let modelProvider: @Sendable (_ request: Request) -> any AIModelProviderProtocol
+    let promptTemplateProviders: @Sendable (_ request: Request) -> [any AIPromptTemplateProvider]
+    let eventHandler: @Sendable (_ request: Request) -> E
     let setupStorage: @Sendable (Request, CompletionClient) -> Void
 
     public init(
-        models: [any AIModel],
-        promptTemplateProviders: @Sendable @escaping (Request) -> [any AIPromptTemplateProvider],
+        modelProvider: @Sendable @escaping (_ request: Request) -> any AIModelProviderProtocol,
+        promptTemplateProviders: @Sendable @escaping (_ request: Request) -> [any AIPromptTemplateProvider],
+        eventHandler: @Sendable @escaping (_ request: Request) -> E,
         setupStorage: @escaping @Sendable (Request, CompletionClient) -> Void
     ) {
-        self.models = models
+        self.modelProvider = modelProvider
         self.setupStorage = setupStorage
         self.promptTemplateProviders = promptTemplateProviders
+        self.eventHandler = eventHandler
     }
 
     public func respond(
         to request: Request,
         chainingTo responder: AsyncResponder
     ) async throws -> Response {
-        let runner = AICompletionClient(
-            models: models,
-            client: AIClient.self,
-            promptTemplateProviders: promptTemplateProviders(request),
-            logger: request.logger
-        )
-
-        setupStorage(request, runner)
-
         return try await withDependencies {
             $0.request = request
         } operation: {
-            try await responder.respond(to: request)
+            let runner = CompletionClient(
+                client: AIClient.self,
+                modelProvider: modelProvider(request),
+                promptTemplateProviders: promptTemplateProviders(request),
+                eventHandler: eventHandler(request),
+                logger: request.logger
+            )
+
+            setupStorage(request, runner)
+
+            return try await responder.respond(to: request)
         }
     }
 }

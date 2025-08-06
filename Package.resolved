@@ -1,5 +1,5 @@
 {
-  "originHash" : "cc752d81ba6d556af7c9adfc143476a4cc7cee5ba18d3aa4cb865adf44a1760f",
+  "originHash" : "45a99a600ec6c2b13d3a7c5c0392b2fd772b4794602368853b7b16c62b417bb9",
   "pins" : [
     {
       "identity" : "async-http-client",
@@ -47,6 +47,15 @@
       }
     },
     {
+      "identity" : "errorkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/FlineDev/ErrorKit.git",
+      "state" : {
+        "revision" : "94d08765d65a7fc7b64730b0a9920ce4246d9fa0",
+        "version" : "1.2.1"
+      }
+    },
+    {
       "identity" : "event-source",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/grepug/event-source.git",
@@ -79,7 +88,7 @@
       "location" : "https://github.com/grepug/swift-ai.git",
       "state" : {
         "branch" : "main",
-        "revision" : "990bc49d4e055cd2ca7bd28d9c85f1a38c0f8f15"
+        "revision" : "d5e4ebf3cf9130e81de110833df996aa08fc29ae"
       }
     },
     {
