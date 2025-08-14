@@ -85,5 +85,9 @@ extension DependencyValues {
         static var liveValue: Request {
             fatalError("Value of type \(Value.self) is not registered in this context")
         }
+
+        static var testValue: Request {
+            fatalError("Value of type \(Value.self) is not registered in this context")
+        }
     }
 }
